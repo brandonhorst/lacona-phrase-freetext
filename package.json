@@ -1,0 +1,38 @@
+{
+  "name": "lacona-phrase-freetext",
+  "version": "0.0.0",
+  "description": "Allows Lacona to parse arbitrary strings, with optional regex",
+  "main": "lib/freetext.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brandonhorst/lacona-phrase-freetext.git"
+  },
+  "keywords": [
+    "lacona",
+    "phrase",
+    "freetext",
+    "regex",
+    "arbitrary",
+    "anything"
+  ],
+  "author": "@brandonhorst",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brandonhorst/lacona-phrase-freetext/issues"
+  },
+  "homepage": "https://github.com/brandonhorst/lacona-phrase-freetext",
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "lacona": "0.0.7",
+    "mocha": "^1.20.1",
+    "sinon": "^1.10.3",
+    "sinon-chai": "^2.5.0"
+  },
+  "dependencies": {
+    "lacona-util": "0.0.0",
+    "lodash": "^2.4.1"
+  }
+}
