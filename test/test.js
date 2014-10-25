@@ -6,21 +6,26 @@ var expect = chai.expect;
 
 chai.use(require('sinon-chai'));
 
-
 describe('lacona-phrase-freetext', function() {
 	var parser;
 	beforeEach(function() {
-		parser = new lacona.Parser().understand(freetext);
+		parser = new lacona.Parser({sentences: ['test']});
+		parser.sentences
 	});
 
 	it('handles an standalone, no-regex freetext', function(done) {
 		var schema = {
-			root: {
-				type: 'freetext',
-				id: 'test'
-			},
-			run: ''
+			phrases: [{
+				name: 'test',
+				langs: ['default'],
+				root: {
+					type: 'freetext',
+					id: 'test'
+				}
+			}],
+			dependencies: [freetext]
 		};
+
 
 		var onData = sinon.spy(function(data) {
 			expect(data.match[0].string).to.equal('anything');
@@ -44,7 +49,7 @@ describe('lacona-phrase-freetext', function() {
 	// 		root: {
 	// 			type: 'freetext',
 	// 			id: 'test'
-	// 			regex = 
+	// 			regex =
 	// 		},
 	// 		sentence: true
 	// 	};

@@ -26,7 +26,7 @@
   "homepage": "https://github.com/brandonhorst/lacona-phrase-freetext",
   "devDependencies": {
     "chai": "^1.9.1",
-    "lacona": "0.0.7",
+    "lacona": "0.3.0",
     "mocha": "^1.20.1",
     "sinon": "^1.10.3",
     "sinon-chai": "^2.5.0"
