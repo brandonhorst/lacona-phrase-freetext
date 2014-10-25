@@ -1,6 +1,6 @@
 {
   "name": "lacona-phrase-freetext",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Allows Lacona to parse arbitrary strings, with optional regex",
   "main": "lib/freetext.js",
   "scripts": {
