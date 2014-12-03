@@ -25,14 +25,13 @@
   },
   "homepage": "https://github.com/brandonhorst/lacona-phrase-freetext",
   "devDependencies": {
-    "chai": "^1.9.1",
-    "lacona": "0.3.0",
-    "mocha": "^1.20.1",
-    "sinon": "^1.10.3",
-    "sinon-chai": "^2.5.0"
+    "chai": "^1.10.0",
+    "lacona": "^0.7.0",
+    "mocha": "^2.0.1",
+    "sinon": "^1.12.1",
+    "sinon-chai": "^2.6.0"
   },
   "dependencies": {
-    "lacona-util": "0.0.0",
-    "lodash": "^2.4.1"
+    "lacona-util": "0.0.0"
   }
 }
