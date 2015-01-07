@@ -1,8 +1,35 @@
 var lacona = require('lacona');
-var freetext = require('../lib/freetext');
+var freetext = require('..');
+
+var stream = require('stream');
 var sinon = require('sinon');
 var chai = require('chai');
 var expect = chai.expect;
+
+function toArray(done) {
+	var newStream = new stream.Writable({objectMode: true});
+	var list = [];
+	newStream.write = function(obj) {
+		list.push(obj);
+	};
+
+	newStream.end = function() {
+		done(list);
+	};
+
+	return newStream;
+}
+
+function toStream(strings) {
+	var newStream = new stream.Readable({objectMode: true});
+
+	strings.forEach(function (string) {
+		newStream.push(string);
+	});
+	newStream.push(null);
+
+	return newStream;
+}
 
 chai.use(require('sinon-chai'));
 
@@ -10,11 +37,10 @@ describe('lacona-phrase-freetext', function() {
 	var parser;
 	beforeEach(function() {
 		parser = new lacona.Parser({sentences: ['test']});
-		parser.sentences
 	});
 
 	it('handles an standalone, no-regex freetext', function(done) {
-		var schema = {
+		var grammar = {
 			phrases: [{
 				name: 'test',
 				root: {
@@ -25,26 +51,21 @@ describe('lacona-phrase-freetext', function() {
 			dependencies: [freetext]
 		};
 
-
-		var onData = sinon.spy(function(data) {
-			expect(data.match[0].string).to.equal('anything');
-			expect(data.result.test).to.equal('anything');
-		});
-
-		var onEnd = function() {
-			expect(onData).to.have.been.called.once;
+		function callback(data) {
+			expect(data).to.have.length(3);
+			expect(data[1].data.match[0].string).to.equal('anything');
+			expect(data[1].data.result.test).to.equal('anything');
 			done();
-		};
+		}
 
-		parser
-		.understand(schema)
-		.on('data', onData)
-		.on('end', onEnd)
-		.parse('anything');
+		parser.understand(grammar);
+		toStream(['anything'])
+			.pipe(parser)
+			.pipe(toArray(callback));
 	});
 
 	it('handles a regex freetext', function(done) {
-		var schema = {
+		var grammar = {
 			phrases: [{
 				name: 'test',
 				root: {
@@ -56,26 +77,21 @@ describe('lacona-phrase-freetext', function() {
 			dependencies: [freetext]
 		};
 
-
-		var onData = sinon.spy(function(data) {
-			expect(data.match[0].string).to.equal('anything');
-			expect(data.result.test).to.equal('anything');
-		});
-
-		var onEnd = function() {
-			expect(onData).to.have.been.called.once;
+		function callback(data) {
+			expect(data).to.have.length(3);
+			expect(data[1].data.match[0].string).to.equal('anything');
+			expect(data[1].data.result.test).to.equal('anything');
 			done();
-		};
+		}
 
-		parser
-		.understand(schema)
-		.on('data', onData)
-		.on('end', onEnd)
-		.parse('anything');
+		parser.understand(grammar);
+		toStream(['anything'])
+			.pipe(parser)
+			.pipe(toArray(callback));
 	});
 
 	it('handles a plain-text regex freetext', function(done) {
-		var schema = {
+		var grammar = {
 			phrases: [{
 				name: 'test',
 				root: {
@@ -87,26 +103,21 @@ describe('lacona-phrase-freetext', function() {
 			dependencies: [freetext]
 		};
 
-
-		var onData = sinon.spy(function(data) {
-			expect(data.match[0].string).to.equal('anything');
-			expect(data.result.test).to.equal('anything');
-		});
-
-		var onEnd = function() {
-			expect(onData).to.have.been.called.once;
+		function callback(data) {
+			expect(data).to.have.length(3);
+			expect(data[1].data.match[0].string).to.equal('anything');
+			expect(data[1].data.result.test).to.equal('anything');
 			done();
-		};
+		}
 
-		parser
-		.understand(schema)
-		.on('data', onData)
-		.on('end', onEnd)
-		.parse('anything');
+		parser.understand(grammar);
+		toStream(['anything'])
+		.pipe(parser)
+		.pipe(toArray(callback));
 	});
 
 	it('suggests a default', function(done) {
-		var schema = {
+		var grammar = {
 			phrases: [{
 				name: 'test',
 				root: {
@@ -118,22 +129,17 @@ describe('lacona-phrase-freetext', function() {
 			dependencies: [freetext]
 		};
 
-
-		var onData = sinon.spy(function(data) {
-			expect(data.suggestion.words[0].string).to.equal('whatever');
-			expect(data.result.test).to.equal('whatever');
-		});
-
-		var onEnd = function() {
-			expect(onData).to.have.been.called.once;
+		function callback(data) {
+			expect(data).to.have.length(3);
+			expect(data[1].data.suggestion.words[0].string).to.equal('whatever');
+			expect(data[1].data.result.test).to.equal('whatever');
 			done();
-		};
+		}
 
-		parser
-		.understand(schema)
-		.on('data', onData)
-		.on('end', onEnd)
-		.parse('');
+		parser.understand(grammar);
+		toStream([''])
+		.pipe(parser)
+		.pipe(toArray(callback));
 	});
 
 });
