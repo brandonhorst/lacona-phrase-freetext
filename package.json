@@ -4,7 +4,13 @@
   "description": "Allows Lacona to parse arbitrary strings, with optional regex",
   "main": "lib/freetext.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test",
+    "lint": "npm run lint:lib && npm run lint:test",
+    "lint:lib": "jshint --config node_modules/lacona-util-jshint/lib.json lib",
+    "lint:test": "jshint --config node_modules/lacona-util-jshint/test.json test",
+    "validate": "npm run lint && npm run test",
+    "cover": "istanbul cover _mocha test -- -R dot && istanbul report text",
+    "coveralls": "istanbul cover _mocha test --report lcovonly -- -R dot && cat coverage/lcov.info | coveralls && rimraf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -26,13 +32,15 @@
   "homepage": "https://github.com/brandonhorst/lacona-phrase-freetext",
   "devDependencies": {
     "chai": "^1.10.0",
-    "lacona": "^0.12.0",
-    "mocha": "^2.1.0",
-    "sinon": "^1.12.2",
-    "sinon-chai": "^2.6.0"
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.5",
+    "jshint": "^2.5.11",
+    "lacona": "^0.14.2",
+    "lacona-util-jshint": "^0.2.0",
+    "mocha": "^2.1.0"
   },
   "dependencies": {
-    "lacona-phrase-validator": "^0.1.1",
+    "lacona-phrase-validator": "^0.3.0",
     "lacona-util": "0.0.0"
   }
 }
