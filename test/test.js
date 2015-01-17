@@ -126,4 +126,33 @@ describe('lacona-phrase-freetext', function() {
 			.pipe(toArray(callback));
 	});
 
+	it('allows a literal after it (handles minimum first)', function(done) {
+		var test = lacona.createPhrase({
+			name: 'test/test',
+			describe: function () {
+				return lacona.sequence({children: [
+					freetext(),
+					lacona.literal({text: ' abc'})
+				]});
+			}
+		});
+
+		function callback(data) {
+			expect(data).to.have.length(4);
+
+			expect(data[1].data.match[0].string).to.equal('abc');
+			expect(data[1].data.suggestion.words[0].string).to.equal(' abc');
+
+			expect(data[2].data.match[0].string).to.equal('abc a');
+			expect(data[2].data.suggestion.words[0].string).to.equal(' abc');
+			done();
+		}
+
+		parser.sentences = [test()];
+
+		toStream(['abc a'])
+			.pipe(parser)
+			.pipe(toArray(callback));
+	});
+
 });
