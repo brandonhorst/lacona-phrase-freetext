@@ -1,5 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
+var fulltext = require('lacona-util-fulltext');
 var lacona = require('lacona');
 var stream = require('stream');
 
@@ -47,7 +48,7 @@ describe('lacona-phrase-freetext', function() {
 
 		function callback(data) {
 			expect(data).to.have.length(3);
-			expect(data[1].data.match[0].string).to.equal('anything');
+			expect(fulltext.match(data[1].data)).to.equal('anything');
 			expect(data[1].data.result.test).to.equal('anything');
 			done();
 		}
@@ -77,7 +78,7 @@ describe('lacona-phrase-freetext', function() {
 		it('accepts a regex', function(done) {
 			function callback(data) {
 				expect(data).to.have.length(3);
-				expect(data[1].data.match[0].string).to.equal('anything');
+				expect(fulltext.match(data[1].data)).to.equal('anything');
 				expect(data[1].data.result.test).to.equal('anything');
 				done();
 			}
@@ -114,7 +115,7 @@ describe('lacona-phrase-freetext', function() {
 
 		function callback(data) {
 			expect(data).to.have.length(3);
-			expect(data[1].data.suggestion.words[0].string).to.equal('whatever');
+			expect(fulltext.suggestion(data[1].data)).to.equal('whatever');
 			expect(data[1].data.result.test).to.equal('whatever');
 			done();
 		}
@@ -140,11 +141,11 @@ describe('lacona-phrase-freetext', function() {
 		function callback(data) {
 			expect(data).to.have.length(4);
 
-			expect(data[1].data.match[0].string).to.equal('abc');
-			expect(data[1].data.suggestion.words[0].string).to.equal(' abc');
+			expect(fulltext.match(data[1].data)).to.equal('abc');
+			expect(fulltext.suggestion(data[1].data)).to.equal(' abc');
 
-			expect(data[2].data.match[0].string).to.equal('abc a');
-			expect(data[2].data.suggestion.words[0].string).to.equal(' abc');
+			expect(fulltext.match(data[2].data)).to.equal('abc a');
+			expect(fulltext.suggestion(data[2].data)).to.equal(' abc');
 			done();
 		}
 
