@@ -40,7 +40,7 @@
     "mocha": "^2.1.0"
   },
   "dependencies": {
-    "lacona-phrase-validator": "^0.5.1",
-    "lacona": "^0.16.0"
+    "lacona": "^0.16.2",
+    "lacona-phrase-validator": "^0.5.4"
   }
 }
