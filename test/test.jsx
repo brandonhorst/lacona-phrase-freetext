@@ -1,110 +1,76 @@
 /** @jsx createElement */
 /* eslint-env mocha */
 
-import es from 'event-stream'
 import {expect} from 'chai'
 import Freetext from '..'
 import fulltext from 'lacona-util-fulltext'
 import {Parser} from 'lacona'
 import {createElement} from 'lacona-phrase'
 
+function from(i) {const a = []; for (let x of i) a.push(x); return a}
 
-describe('lacona-phrase-freetext', function() {
-	var parser;
+describe('lacona-phrase-freetext', () => {
+	var parser
 
-	beforeEach(function() {
-		parser = new Parser();
-	});
+	beforeEach(() => {
+		parser = new Parser()
+	})
 
-	it('handles an standalone, no-regex freetext', function(done) {
-		function callback(err, data) {
-			expect(data).to.have.length(3);
-			expect(fulltext.match(data[1].data)).to.equal('anything');
-			expect(data[1].data.result).to.equal('anything');
-			done();
-		}
-
+	it('handles an standalone, no-regex freetext', () => {
 		parser.sentences = [<Freetext />]
 
-		es.readArray(['anything'])
-			.pipe(parser)
-			.pipe(es.writeArray(callback));
-	});
+		const data = from(parser.parse('anything'))
+		expect(data).to.have.length(1)
+		expect(fulltext.match(data[0])).to.equal('anything')
+		expect(data[0].result).to.equal('anything')
+	})
 
 	describe('regex', function () {
-		it('accepts a regex', function(done) {
-			function callback(err, data) {
-				expect(data).to.have.length(3);
-				expect(fulltext.match(data[1].data)).to.equal('anything');
-				expect(data[1].data.result).to.equal('anything');
-				done();
-			}
-
+		it('accepts a regex', () => {
 			parser.sentences = [<Freetext regex={/anything/} />]
-			es.readArray(['anything'])
-				.pipe(parser)
-				.pipe(es.writeArray(callback));
-		});
+			const data = from(parser.parse('anything'))
+			expect(data).to.have.length(1)
+			expect(fulltext.match(data[0])).to.equal('anything')
+			expect(data[0].result).to.equal('anything')
+		})
 
-		it('rejects a regex', function(done) {
-			function callback(err, data) {
-				expect(data).to.have.length(2);
-				done();
-			}
-
+		it('rejects a regex', () => {
 			parser.sentences = [<Freetext regex={/anything/} />]
-			es.readArray(['nothing'])
-				.pipe(parser)
-				.pipe(es.writeArray(callback));
-		});
-	});
+			const data = from(parser.parse('nothing'))
+			expect(data).to.have.length(0)
+		})
+	})
 
-	it('suggests a default', function(done) {
-		function callback(err, data) {
-			expect(data).to.have.length(3);
-			expect(fulltext.suggestion(data[1].data)).to.equal('whatever');
-			expect(data[1].data.result).to.equal('whatever');
-			done();
-		}
+	it('suggests a default', () => {
+		parser.sentences = [
+			<Freetext>
+				<literal text='whatever' value='whatValue' />
+			</Freetext>
+		]
 
-		parser.sentences = [<Freetext default='whatever' />];
+		const data = from(parser.parse(''))
+		expect(data).to.have.length(1)
+		expect(fulltext.suggestion(data[0])).to.equal('whatever')
+		expect(data[0].result).to.equal('whatValue')
+	})
 
-		es.readArray([''])
-			.pipe(parser)
-			.pipe(es.writeArray(callback));
-	});
-
-	it('completes a default', function(done) {
-		function callback(err, data) {
-			expect(data).to.have.length(3);
-			expect(fulltext.completion(data[1].data)).to.equal('whatever');
-			done();
-		}
-
+	it('completes a default', () => {
 		parser.sentences = [
 			<sequence>
 				<literal text='test' />
-				<Freetext default='whatever' />
+				<Freetext id='free'>
+					<literal text='whatever' value='whatValue' />
+				</Freetext>
 			</sequence>
 		]
 
-		es.readArray(['te'])
-			.pipe(parser)
-			.pipe(es.writeArray(callback));
-	});
+		const data = from(parser.parse('te'))
+		expect(data).to.have.length(1)
+		expect(fulltext.completion(data[0])).to.equal('whatever')
+		expect(data[0].result.free).to.equal('whatValue')
+	})
 
-	it('allows a literal after it (handles minimum first)', function(done) {
-		function callback(err, data) {
-			expect(data).to.have.length(4);
-
-			expect(fulltext.match(data[1].data)).to.equal('abc');
-			expect(fulltext.suggestion(data[1].data)).to.equal(' abc');
-
-			expect(fulltext.match(data[2].data)).to.equal('abc a');
-			expect(fulltext.suggestion(data[2].data)).to.equal(' abc');
-			done();
-		}
-
+	it('allows a literal after it (handles minimum first)', () => {
 		parser.sentences = [
 			<sequence>
 				<Freetext />
@@ -112,8 +78,11 @@ describe('lacona-phrase-freetext', function() {
 			</sequence>
 		]
 
-		es.readArray(['abc a'])
-			.pipe(parser)
-			.pipe(es.writeArray(callback));
-	});
-});
+		const data = from(parser.parse('abc a'))
+		expect(data).to.have.length(2)
+		expect(fulltext.match(data[0])).to.equal('abc')
+		expect(fulltext.suggestion(data[0])).to.equal(' abc')
+		expect(fulltext.match(data[1])).to.equal('abc a')
+		expect(fulltext.suggestion(data[1])).to.equal(' abc')
+	})
+})
